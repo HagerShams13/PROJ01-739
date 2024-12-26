@@ -1,5 +1,6 @@
 import UserModel from '../../../../Database/Models/user.model.js'
 import AppError from '../../../../Middleware/AppError.js'
+import bcrypt from 'bcrypt'
 export const getAllUsers =async(req,res,next)=>{
     let result = await UserModel.find()
     !result && next(new AppError("Not Found",404))
@@ -26,6 +27,10 @@ export const addUser =async(req,res,next)=>{
 export const updateUser =async(req,res,next)=>{
     let update = req.body
     !update && next(new AppError("No updates!"),400)
+    if(update.Password) {
+        let hashedPass = bcrypt.hash(update.Password,process.env.SALT_ROUNDS)
+        update.Password = hashedPass
+    }
     let result = await UserModel.findByIdAndUpdate(req.params.id,update,{new:true})    
     !result && next(new AppError("Not Found",404))
     res.status(200).json({message:"Success",result})
