@@ -1,36 +1,37 @@
-import userModel from '../../../../Database/Models/user.model.js'
+import UserModel from '../../../../Database/Models/user.model.js'
 import AppError from '../../../../Middleware/AppError.js'
 export const getAllUsers =async(req,res,next)=>{
-    let result = await userModel.find()
+    let result = await UserModel.find()
     !result && next(new AppError("Not Found",404))
     res.status(200).json({message:"Success",result})
 }
-
 export const getUser =async(req,res,next)=>{
-    let userId = req.param.id
-    let result = await userModel.findById(userId)
+    let userId = req.params.id        
+    let result = await UserModel.findById(userId)    
     !result && next(new AppError("Not Found",404))
     res.status(200).json({message:"Success",result})
 }
-
-export const addUser =async(req,res,next)=>{
+export const addUser =async(req,res,next)=>{    
     if(!req.body.userName || !req.body.Email ||!req.body.Password || !req.body.Nationality) next(new AppError("Not Found"),400)
-    let user = {userName:req.body.userName, Email: req.body.Email, Password: req.body.Password, Nationality:req.body.Nationality }
-    let result = await userModel.insertOne(user)
+    const user = new UserModel({
+        userName:req.body.userName,
+        Email: req.body.Email,
+        Password: req.body.Password,
+        Nationality:req.body.Nationality
+    });
+    const result = await user.save();
     !result && next(new AppError("Not Found",404))
     res.status(200).json({message:"Success",result})
 }
-
 export const updateUser =async(req,res,next)=>{
     let update = req.body
-    !update && next(new AppError("Not Found"),400)
-    let result = await userModel.findByIdAndUpdate(req.param.id,{update})
+    !update && next(new AppError("No updates!"),400)
+    let result = await UserModel.findByIdAndUpdate(req.params.id,update,{new:true})    
     !result && next(new AppError("Not Found",404))
     res.status(200).json({message:"Success",result})
 }
-
 export const deleteUser =async(req,res,next)=>{
-    let result = await userModel.findOneAndDelete(req.param.id)
-    !result && next(new AppError("Not Found",404))
-    res.status(200).json({message:"Success",result})
+    let result = await UserModel.deleteOne({_id:req.params.id})
+    !result.deletedCount && next(new AppError("Not Found user",404))
+    res.status(200).json({message:"Success"})
 }

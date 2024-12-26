@@ -20,5 +20,5 @@ init(app)
 
 //Listening to port
 app.listen(port,()=>{
-    console.log(`Server is runnong on port ${port}`)
+    console.log(`Server is running on port ${port}`)
 })

@@ -8,7 +8,7 @@ userRouter.get('/:id',getUser)
 //Create user
 userRouter.post('/',addUser)
 //Update user
-userRouter.patch('/:id',updateUser)
+userRouter.put('/:id',updateUser)
 //Delete user
 userRouter.delete('/:id',deleteUser)
 export default userRouter;
